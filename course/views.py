@@ -40,9 +40,12 @@ from rest_framework.decorators import  api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework import generics
+from rest_framework import viewsets
 
 from .models import Course
 from .serializers import CourseSerializer
+
 
 
 """一、函数式编程 Function Based View"""
@@ -110,9 +113,8 @@ class CourseList(APIView):
 
 
 class CourseDetail(APIView):
-
     @staticmethod
-    def get_object(self, pk):
+    def get_object(pk):
         """
         :param pk:
         :return:
@@ -147,6 +149,7 @@ class CourseDetail(APIView):
             s.save()
             print(type(request.data), type(s.data))
             return Response(data=s.data, status=status.HTTP_201_CREATED)
+
     def delete(self, request, pk):
         """
         param request；
@@ -158,3 +161,25 @@ class CourseDetail(APIView):
             return Response(data={"msg": "没有课程信息"}, status=status.HTTP_404_NOT_FOUND)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+"""三、 通用类视图 Generic Class Based View"""
+class GCourseList(generics.ListCreateAPIView):
+
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(teacher=self.request.user)
+
+class GCourseDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
+"""四、 DRF的视图集viewssets"""
+class CourseViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(teacher=self.request.user)

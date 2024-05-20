@@ -147,12 +147,13 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
     ],
     'DEFAULT_PERMISSION_CLASS': [
+        'rest.framework.permissions.IsAuthenticated',   #设置是否需要登录
+    ],
+    'DEFAULT_AUTHENTICATION_CLASS': {
         'rest_framework.authentication.BasicAuthentication',
         'rest.framework.authentication.SessionAuthentication',
         'rest.framework.authentication.TokenAuthentication',
-        'rest.framework.permissions.IsAuthenticated',   #设置是否需要登录
-
-    ],
+    }
 }
 
 
